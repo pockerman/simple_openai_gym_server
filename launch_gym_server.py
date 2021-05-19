@@ -14,7 +14,7 @@ def main(configuration):
     """
     Host the server.
     """
-    
+
     # If anything is logged during imports, it messes up our logging so we
     # reset the logging module here
     root_logger = logging.getLogger()

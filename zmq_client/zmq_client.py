@@ -10,7 +10,7 @@ class ZmqClient:
     Provides a ZeroMQ interface for communicating with client.
     """
 
-    def __init__(self, port: int):
+    def __init__(self, port: int) -> None:
         context = zmq.Context()
         self.socket = context.socket(zmq.PAIR)
         self.socket.bind(f"tcp://*:{port}")
