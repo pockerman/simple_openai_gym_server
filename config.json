@@ -1,0 +1,4 @@
+{
+  "server_type": "FrozenLake",
+  "env_name": "FrozenLake-v0"
+}
