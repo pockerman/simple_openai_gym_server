@@ -32,7 +32,11 @@ class ServerBase(ABC):
 
     @property
     def env_name(self) -> str:
-        return self._configuration["env_name"]
+        return self._configuration["env"]["name"]
+
+    @property
+    def n_environments(self) -> int:
+        return self.configuration["env"]["copies"]
 
     def serve(self):
         """

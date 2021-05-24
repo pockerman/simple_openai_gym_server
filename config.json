@@ -1,4 +1,8 @@
 {
   "server_type": "FrozenLake",
-  "env_name": "FrozenLake-v0"
+  "env":{
+    "name": "FrozenLake-v0",
+    "copies": 1,
+  },
+
 }
