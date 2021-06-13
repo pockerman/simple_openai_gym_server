@@ -1,5 +1,6 @@
 import logging
 import gym
+import numpy as np
 from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv
 from baselines.common.vec_env.dummy_vec_env import DummyVecEnv
@@ -14,7 +15,7 @@ class AtariLunarLander(ServerBase):
     def __init__(self, configuration, zmq_client: ZmqClient) -> None:
         super(AtariLunarLander, self).__init__(configuration=configuration,
                                                zmq_client=zmq_client)
-        logging.info("AtariLunarLander server initialized")
+        logging.info("AtariLunarLander server initialized...")
 
     def _serve(self) -> None:
 
@@ -33,20 +34,24 @@ class AtariLunarLander(ServerBase):
                  observation_space_type,
                  observation_space_size, has_errors, error_msg) = self._info()
 
-                self.zmq_client.send(InfoMessage(action_space_type,
-                                                 action_space_size,
-                                                 observation_space_type,
-                                                 observation_space_size,
-                                                 has_error=has_errors,
-                                                 error_msg=error_msg))
+                self.zmq_client.send(InfoMessage(action_space_type, action_space_size,
+                                                 observation_space_type, observation_space_size,
+                                                 has_error=has_errors, error_msg=error_msg))
             elif method == 'make':
-                self._make()
-                self.zmq_client.send(MakeMessage())
+
+                try:
+                    self._make()
+                    self.zmq_client.send(MakeMessage(result="OK"))
+                except Exception as e:
+                    self.zmq_client.send(MakeMessage(result="Error " + str(e)))
 
             elif method == 'reset':
-                observation = self._reset()
-                logging.info(" Observation " + str(observation))
-                self.zmq_client.send(ResetMessage(observation))
+                try:
+                    observation = self._reset()
+                    logging.info(" Observation " + str(observation))
+                    self.zmq_client.send(ResetMessage(observation=observation, result="OK"))
+                except Exception as e:
+                    self.zmq_client.send(ResetMessage(observation=np.ndarray([]), result="Error " + str(e)))
 
             elif method == 'step':
                 result = self._step(action=param["action"], render=param["render"])
@@ -108,17 +113,15 @@ class AtariLunarLander(ServerBase):
             self.env = None
 
         logging.info("Making %d %ss", self.n_environments, self.env_name)
-        self.env = self.__make_atari_vec_envs(0, self.n_environments)
 
+        if self.n_environments == 1:
+            self.env = gym.make(self.env_name)
+        else:
+            self.env = self.__make_atari_vec_envs(0, self.n_environments)
 
     def __make_env(self, seed: int, idx: int):
 
         def _thunk():
-            #env = gym.make(self.env_name)
-
-            #is_atari = hasattr(gym.envs, 'atari') and isinstance(
-            #    env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
-            #if is_atari:
             env = make_atari(self.env_name)
             env.seed(seed + idx)
 
