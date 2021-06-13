@@ -18,7 +18,7 @@ class ServerFactory(object):
             raise ValueError("Server type not specified in configuration")
 
         server_type = configuration["server_type"]
-        if  server_type == "FrozenLake":
+        if server_type == "FrozenLake":
             return FrozenLakeServer(configuration=configuration, zmq_client=zmq_client)
         elif server_type == "CartPole":
             return CartPoleServer(configuration=configuration, zmq_client=zmq_client)
