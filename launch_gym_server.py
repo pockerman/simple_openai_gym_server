@@ -26,8 +26,7 @@ def main(configuration):
                                 '[%(levelname)s]: %(message)s'),
                         datefmt='%Y%m%d %H:%M:%S')
 
-    logging.info("Initializing gym server")
-
+    logging.info("Initializing gym server...")
     zmq_client = ZmqClient(10201)
     logging.info("Connecting to client")
     zmq_client.send("Connection established")
@@ -36,6 +35,7 @@ def main(configuration):
     # build the server
     server = ServerFactory.build(configuration=configuration, zmq_client=zmq_client)
 
+    logging.info(f"Created gym server {server.env_name}")
     try:
         server.serve()
     #except Exception as e:  # pylint: disable=bare-except
