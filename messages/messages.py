@@ -64,6 +64,7 @@ class DynamicsMessage(Message):
             "next_state": self.next_state,
             "reward": self.reward,
             "done": self.done,
+            "result": "OK"
         }
         return msgpack.packb(request)
 
@@ -73,9 +74,13 @@ class MakeMessage(Message):
     Builds the JSON for returning the result of an make_env() action.
     """
 
+    def __init__(self, result: str = "OK"):
+        super(MakeMessage, self).__init__()
+        self._result = result
+
     def to_msg(self) -> bytes:
         request = {
-            "result": "OK"
+            "result": self._result
         }
         return msgpack.packb(request)
 
@@ -85,8 +90,9 @@ class ResetMessage(Message):
     Builds the JSON for returning the result of an env.reset() action.
     """
 
-    def __init__(self, observation: np.ndarray):
+    def __init__(self, observation: np.ndarray, result: str = "OK"):
         self.observation = observation
+        self.result = result
 
     def to_msg(self) -> bytes:
 
@@ -99,8 +105,10 @@ class ResetMessage(Message):
                     pack_obs.append(item)
 
         request = {
-            "observation": pack_obs # self.observation.tolist()
+            "observation": pack_obs, # self.observation.tolist()
+            "result": self.result
         }
+
         return msgpack.packb(request)
 
 
@@ -124,6 +132,7 @@ class StepMessage(Message):
             "observation": self.observation.tolist(),
             "reward": self.reward.tolist(),
             "done": self.done.tolist(),
-            "real_reward": self.real_reward.tolist()
+            "real_reward": self.real_reward.tolist(),
+            "result": "OK"
         }
         return msgpack.packb(request)
