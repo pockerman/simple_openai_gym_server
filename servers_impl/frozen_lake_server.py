@@ -14,8 +14,8 @@ class FrozenLakeServer(ServerBase):
     Server for FrozenLake environment
     """
 
-    def __init__(self, zmq_client: ZmqClient) -> None:
-        super(FrozenLakeServer, self).__init__(zmq_client=zmq_client)
+    def __init__(self, configuration: dict, zmq_client: ZmqClient) -> None:
+        super(FrozenLakeServer, self).__init__(configuration=configuration, zmq_client=zmq_client)
         logging.info("Gym server initialized")
 
     def _serve(self) -> None:

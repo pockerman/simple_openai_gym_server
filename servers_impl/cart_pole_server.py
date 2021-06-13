@@ -8,8 +8,8 @@ from messages.messages import (InfoMessage, DynamicsMessage, MakeMessage, ResetM
 
 class CartPoleServer(ServerBase):
 
-    def __init__(self, zmq_client: ZmqClient) -> None:
-        super(CartPoleServer, self).__init__(zmq_client=zmq_client)
+    def __init__(self, configuration: dict, zmq_client: ZmqClient) -> None:
+        super(CartPoleServer, self).__init__(configuration=configuration, zmq_client=zmq_client)
 
     def _serve(self) -> None:
         while True:
